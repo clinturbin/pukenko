@@ -5,8 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pukenko</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%
+}
+
+.main_container {
+    height: 100%;
+    position: absolute;
+}
+
+.fixed_header {
+   height: 35%;
+   z-index: 100;
+   background-color: white;
+   
+
+}
+
+.lower_container {
+    height: 65%;
+    overflow-y: scroll;
+}
+
+.scoreboard {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 2em;
+    border-bottom: solid 1px;
+
+}
+
+.headerpic_container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.pumpkinpic {
+    width: 130px;
+    height: 130px;
+     
+}
+
+p{
+    text-align: center;
+}
+
+.buttonClass{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+button {
+    background-color: darkorange;
+    border: none;
+    color: white;
+    width: 180px;
+    padding: 15px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    
+}
+
+
+</style>
 </head>
 <body>
-    
+<div class="main_container">
+<div class="fixed_header">
+    <div class="headerpic_container">
+        <img class ="pumpkinpic" src ="images/pumpkin.jpg">
+    </div>
+    <div class="scoreboard">
+    <div class ="HappyScore">
+        Happiess:
+        </div>
+
+        <div class ="HealthScore">
+        Health:
+        </div>
+
+        <div class ="ConductScore">
+        Conduct:
+        </div>
+    </div>
+</div>
+<div class="lower_container">
+<div class = "buttonClass">
+    <button>
+    Smoothie
+    </button>
+
+    <button>
+    Junkfood
+    </button>
+
+    <button>
+    Homework
+    </button>
+</div>
+<div>
+    <ol>
+        <li>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Obcaecati, fuga?
+        </li>
+        <li>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Temporibus, ratione?
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, officiis!
+        </li>
+        <li>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sunt, dolores!
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto, similique.
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsa, libero.
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Error, optio.
+        </li>
+        <li>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat, exercitationem?
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, tempora.
+        </li>
+        <li>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem, asperiores.
+        </li>
+    </ol>
+</div>
+</div>
+</div>
+<script src="index.js"></script>      
 </body>
 </html>
