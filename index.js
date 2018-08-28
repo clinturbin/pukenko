@@ -1,3 +1,4 @@
+
 function randomHappyScore(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
  };
@@ -31,5 +32,3 @@ function randomHappyScore(min, max) {
  var conductScore = document.createElement('p');
  conductScore.textContent = defaultConductScore;
  conductScoreIntoDom.appendChild(conductScore);
-
- 

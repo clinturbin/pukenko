@@ -11,7 +11,8 @@ CREATE TABLE pukenkos (
     name character varying(255) NOT NULL,
     hunger INTEGER NOT NULL,
     happiness INTEGER NOT NULL,
-    discipline INTEGER NOT NULL
+    discipline INTEGER NOT NULL,
+    created_by INTEGER NOT NULL
 );
 
 CREATE TABLE actions (
