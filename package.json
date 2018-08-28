@@ -1,0 +1,24 @@
+{
+  "name": "pukenko",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clinturbin/pukenko.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clinturbin/pukenko/issues"
+  },
+  "homepage": "https://github.com/clinturbin/pukenko#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "pg-promise": "^8.4.6"
+  }
+}
