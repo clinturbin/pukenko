@@ -1,7 +1,7 @@
 const happyScoreIntoDom = document.querySelector('.HappyScore');
 const healthScoreIntoDom = document.querySelector('.HealthScore');
 const conductScoreIntoDom = document.querySelector('.ConductScore');
-
+const actionLog = document.querySelector('.actionLog');
 const smoothieButton = document.querySelector('.smoothieButton');
 const junkfoodButton = document.querySelector('.junkfoodButton');
 const homeworkButton = document.querySelector('.homeworkButton');
@@ -9,10 +9,6 @@ const homeworkButton = document.querySelector('.homeworkButton');
 let randomScore = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
  };
-
-
-
-
 
 
 let defaultHappyScore = randomScore(2,8);
@@ -25,24 +21,22 @@ let updateScores = () => {
     conductScoreIntoDom.textContent = defaultConductScore;
 };
 
-var actionLog = document.querySelector('.actionLog');
 
-
-var addItemSmoothie = () => {
-    var newLogItem = document.createElement('li');
+let addItemSmoothie = () => {
+    let newLogItem = document.createElement('li');
     newLogItem.textContent = `You gave Pukenko a Smoothie. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`;
     actionLog.appendChild(newLogItem);
     
 };
 
-var addItemJunkfood = () => {
-    var newLogItem = document.createElement('li');
+let addItemJunkfood = () => {
+    let newLogItem = document.createElement('li');
     newLogItem.textContent = `You gave Pukenko Junkfood. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`
     actionLog.appendChild(newLogItem);
 };
 
-var addItemHomework = () => {
-    var newLogItem = document.createElement('li');
+let addItemHomework = () => {
+    let newLogItem = document.createElement('li');
     newLogItem.textContent = `You made Pukenko do homework. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`
     actionLog.appendChild(newLogItem);
 };
