@@ -1,34 +1,45 @@
+const happyScoreIntoDom = document.querySelector('.HappyScore');
+const healthScoreIntoDom = document.querySelector('.HealthScore');
+const conductScoreIntoDom = document.querySelector('.ConductScore');
 
-function randomHappyScore(min, max) {
+const smoothieButton = document.querySelector('.smoothieButton');
+const junkfoodButton = document.querySelector('.junkfoodButton');
+const homeworkButton = document.querySelector('.homeworkButton');
+
+let randomeScore = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
  };
- 
- function randomHealthScore(min, max) {
-     return Math.floor(Math.random() * (max - min) + min);
-  };
- 
- function randomConductScore(min, max) {
-     return Math.floor(Math.random() * (max - min) + min);
-  };
- 
- var defaultHappyScore = randomHappyScore(2,8);
- var defaultHealthScore = randomHealthScore(2,8);
- var defaultConductScore = randomConductScore(2,8);
- 
-//inserts happy score - for my own reference, should come from DB in final version
- var happyScoreIntoDom = document.querySelector('.HappyScore');
- var happyScore = document.createElement('p');
- happyScore.textContent = defaultHappyScore;
- happyScoreIntoDom.appendChild(happyScore);
 
-//inserts health score - for my own reference, should come from DB in final version
- var healthScoreIntoDom = document.querySelector('.HealthScore');
- var healthScore = document.createElement('p');
- healthScore.textContent = defaultHealthScore;
- healthScoreIntoDom.appendChild(healthScore);
+let defaultHappyScore = randomScore(2,8);
+let defaultHealthScore = randomScore(2,8);
+let defaultConductScore = randomScore(2,8);
 
- //inserts conduct score - for my own reference, should come from DB in final version
- var conductScoreIntoDom = document.querySelector('.ConductScore');
- var conductScore = document.createElement('p');
- conductScore.textContent = defaultConductScore;
- conductScoreIntoDom.appendChild(conductScore);
+let updateScores = () => {
+    healthScoreIntoDom.textContent = defaultHealthScore;
+    happyScoreIntoDom.textContent = defaultHappyScore;
+    conductScoreIntoDom.textContent = defaultConductScore;
+};
+ 
+
+smoothieButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    defaultHealthScore += 1;
+    updateScores();
+});
+
+junkfoodButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    defaultHealthScore -= 1;
+    defaultHappyScore += 3;
+    defaultConductScore -= 1;
+    updateScores();
+});
+
+homeworkButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    defaultConductScore += 1;
+    defaultHappyScore -= 1;
+    updateScores();
+});
+
+updateScores();
