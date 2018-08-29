@@ -6,7 +6,7 @@ const smoothieButton = document.querySelector('.smoothieButton');
 const junkfoodButton = document.querySelector('.junkfoodButton');
 const homeworkButton = document.querySelector('.homeworkButton');
 
-let randomeScore = (min, max) => {
+let randomScore = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
  };
 
