@@ -5,7 +5,7 @@ html, body {
 
 .main_container {
     height: 100%;
-    position: absolute;
+    justify-content: center;
 }
 
 .fixed_header {
