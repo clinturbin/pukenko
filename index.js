@@ -1,12 +1,12 @@
-var happyScoreIntoDom = document.querySelector('.HappyScore');
-var healthScoreIntoDom = document.querySelector('.HealthScore');
-var conductScoreIntoDom = document.querySelector('.ConductScore');
+const happyScoreIntoDom = document.querySelector('.HappyScore');
+const healthScoreIntoDom = document.querySelector('.HealthScore');
+const conductScoreIntoDom = document.querySelector('.ConductScore');
 
-var smoothieButton = document.querySelector('.smoothieButton');
-var junkfoodButton = document.querySelector('.junkfoodButton');
-var homeworkButton = document.querySelector('.homeworkButton');
+const smoothieButton = document.querySelector('.smoothieButton');
+const junkfoodButton = document.querySelector('.junkfoodButton');
+const homeworkButton = document.querySelector('.homeworkButton');
 
-function randomScore(min, max) {
+let randomeScore = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
  };
 
@@ -14,18 +14,17 @@ let defaultHappyScore = randomScore(2,8);
 let defaultHealthScore = randomScore(2,8);
 let defaultConductScore = randomScore(2,8);
 
-let updateScores = function(){
+let updateScores = () => {
     healthScoreIntoDom.textContent = defaultHealthScore;
     happyScoreIntoDom.textContent = defaultHappyScore;
     conductScoreIntoDom.textContent = defaultConductScore;
-}
+};
  
 
 smoothieButton.addEventListener('click', function(event) {
     event.preventDefault();
     defaultHealthScore += 1;
     updateScores();
-    console.log("smoothie");
 });
 
 junkfoodButton.addEventListener('click', function(event) {
@@ -34,7 +33,6 @@ junkfoodButton.addEventListener('click', function(event) {
     defaultHappyScore += 3;
     defaultConductScore -= 1;
     updateScores();
-    console.log("junkfood");
 });
 
 homeworkButton.addEventListener('click', function(event) {
@@ -42,12 +40,6 @@ homeworkButton.addEventListener('click', function(event) {
     defaultConductScore += 1;
     defaultHappyScore -= 1;
     updateScores();
-   console.log("homework");
 });
-
-
-
-
-
 
 updateScores();
