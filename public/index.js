@@ -5,11 +5,16 @@ const actionLog = document.querySelector('.actionLog');
 const smoothieButton = document.querySelector('.smoothieButton');
 const junkfoodButton = document.querySelector('.junkfoodButton');
 const homeworkButton = document.querySelector('.homeworkButton');
+const pukenkoPic = document.querySelector('.pumpkinpic');
+let pukenkoImageArray = ["images/pukenko.jpg", "images/pukenko_onion.jpg", "images/pukenko_dead.jpg", "images/pukenko_jackolantern.jpg"]
 
 let randomScore = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
  };
 
+let endGame = () => {
+    alert("You killed Pukenko");
+}
 
 let defaultHappyScore = randomScore(2,8);
 let defaultHealthScore = randomScore(2,8);
@@ -19,6 +24,19 @@ let updateScores = () => {
     healthScoreIntoDom.textContent = defaultHealthScore;
     happyScoreIntoDom.textContent = defaultHappyScore;
     conductScoreIntoDom.textContent = defaultConductScore;
+    if (defaultHappyScore && defaultHealthScore && defaultConductScore > 0) {
+        pukenkoPic.setAttribute('src', pukenkoImageArray[0]);
+        };
+    if (defaultHappyScore <= 0){
+        pukenkoPic.setAttribute('src', pukenkoImageArray[1]);
+    };
+    if (defaultConductScore <= 0){
+        pukenkoPic.setAttribute('src', pukenkoImageArray[3]);
+    };
+    if (defaultHealthScore <= 0){
+        pukenkoPic.setAttribute('src', pukenkoImageArray[2]);
+        endGame();
+    };
 };
 
 
@@ -68,6 +86,13 @@ homeworkButton.addEventListener('click', function(event) {
 });
 
 updateScores();
+
+// function changeIMG(){
+//     if (defaultHappyScore > 0) {
+//         console.log("yes")
+//         pukenkoPic.setAttribute('src', pukenkoImageArray[0]);
+//         }
+//     }
 
 fetch('http://localhost:3000/pukenkos/1').then((data) => {
     return data.json();
