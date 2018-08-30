@@ -8,6 +8,24 @@ let server = express();
 
 let generateRandomScore = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
+let loadHomePage = (req, res) => {
+  fs.readFile('index.html', (err, data) => {
+      res.end(data);
+  })
+};
+
+let loadCSS = (req, res) => {
+  fs.readFile('index.css', (err, data) => {
+      res.end(data);
+  })
+};
+
+let loadJavaScript = (req, res) => {
+  fs.readFile('index.js', (err, data) => {
+      res.end(data);
+  })
+};
+
 let createNewUser = (req, res) => {
     let userName = 'Test3';
     let userPassword = '34567';
@@ -29,6 +47,8 @@ let createNewPukenko = (req, res) => {
           ).then(res.end('New Pukenko added - I hope'));
 };
 
+// Need to update this query to move userId and p_ID to users_pukenkos table
+
 // Gets specific Pukenko info (returns an object with name and pukenko stats)
 let getPukenko = (req, res) => {
   let pukenkoId = req.params.id;
@@ -42,6 +62,9 @@ let getPukenko = (req, res) => {
         });
 };
 
+server.get('/', loadHomePage);
+server.get('/index.css', loadCSS);
+server.get('/index.js', loadJavaScript);
 server.get('/pukenkos/:id', getPukenko);
 server.post('/pukenkos', createNewPukenko);
 server.post('/users', createNewUser);
