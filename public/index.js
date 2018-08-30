@@ -69,4 +69,33 @@ homeworkButton.addEventListener('click', function(event) {
 
 updateScores();
 
+fetch('http://localhost:3000/pukenkos/1').then((data) => {
+    return data.json();
+}).then(data => console.log(data))
 
+
+fetch('http://localhost:3000/pukenkos', {
+    method: 'POST',
+    body: JSON.stringify({
+        test: 'result'
+    }),
+    headers: {
+        "Content-Type": 'application/json'
+    }
+}).then((data) => {
+    return data.json();
+}).then(data => console.log(data))
+
+// fetch('http://localhost:3000/pukenkos/1', {
+//     method: 'POST',
+//     headers: {
+//         // authorization: getItem(Token),
+//         "Content-Type": 'application/json'
+//     },
+//     {
+//         body: JSON.stringify({'whatever object I\'m sending': '''});
+//     }
+
+// }).then((data) => {
+//     return data.json();
+// }).then(data => console.log(data))

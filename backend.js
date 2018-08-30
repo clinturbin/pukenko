@@ -3,10 +3,29 @@ const fs = require('fs');
 const pg = require('pg-promise')();
 const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
+const bodyParser = require('body-parser');
 
 let server = express();
 
 let generateRandomScore = (min, max) => Math.floor(Math.random() * (max - min) + min);
+
+let loadHomePage = (req, res) => {
+  fs.readFile('index.html', (err, data) => {
+      res.end(data);
+  })
+};
+
+let loadCSS = (req, res) => {
+  fs.readFile('index.css', (err, data) => {
+      res.end(data);
+  })
+};
+
+let loadJavaScript = (req, res) => {
+  fs.readFile('index.js', (err, data) => {
+      res.end(data);
+  })
+};
 
 let createNewUser = (req, res) => {
     let userName = 'Test3';
@@ -17,17 +36,24 @@ let createNewUser = (req, res) => {
 };
 
 // Create new Pukenko
+// let createNewPukenko = (req, res) => {
+//   let userId = 1;  // This is going to need to received from req?
+//   let pukenkoName = 'pukenkoPostMan1';  // this will have to be received from the input box
+//   let happinessScore = generateRandomScore(2,8);
+//   let hungerScore = generateRandomScore(2,8);
+//   let conductScore = generateRandomScore(2,8);
+//   db.query(`INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by)
+//             VALUES ('${pukenkoName}', ${hungerScore}, ${happinessScore},
+//                     ${conductScore}, ${userId});`
+//           ).then(res.end('New Pukenko added - I hope'));
+// };
+
 let createNewPukenko = (req, res) => {
-  let userId = 1;  // This is going to need to received from req?
-  let pukenkoName = 'pukenkoPostMan1';  // this will have to be received from the input box
-  let happinessScore = generateRandomScore(2,8);
-  let hungerScore = generateRandomScore(2,8);
-  let conductScore = generateRandomScore(2,8);
-  db.query(`INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by)
-            VALUES ('${pukenkoName}', ${hungerScore}, ${happinessScore},
-                    ${conductScore}, ${userId});`
-          ).then(res.end('New Pukenko added - I hope'));
+  console.log(req.body);
+  res.send(req.body);
 };
+
+// Need to update this query to move userId and p_ID to users_pukenkos table
 
 // Gets specific Pukenko info (returns an object with name and pukenko stats)
 let getPukenko = (req, res) => {
@@ -42,6 +68,12 @@ let getPukenko = (req, res) => {
         });
 };
 
+server.use(express.static('./public'))
+
+// server.get('/', renderFile);
+// server.get('/index.css', loadCSS);
+// server.get('/index.js', loadJavaScript);
+server.use(bodyParser.json());
 server.get('/pukenkos/:id', getPukenko);
 server.post('/pukenkos', createNewPukenko);
 server.post('/users', createNewUser);
