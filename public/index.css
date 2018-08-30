@@ -30,6 +30,8 @@ html, body {
 .headerpic_container {
     display: flex;
     justify-content: space-around;
+    /* height: 130px;
+    width: 130px; */
 }
 
 .pumpkinpic {
