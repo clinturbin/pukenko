@@ -3,6 +3,7 @@ const fs = require('fs');
 const pg = require('pg-promise')();
 const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
+const bodyParser = require('body-parser');
 
 let server = express();
 
@@ -35,16 +36,21 @@ let createNewUser = (req, res) => {
 };
 
 // Create new Pukenko
+// let createNewPukenko = (req, res) => {
+//   let userId = 1;  // This is going to need to received from req?
+//   let pukenkoName = 'pukenkoPostMan1';  // this will have to be received from the input box
+//   let happinessScore = generateRandomScore(2,8);
+//   let hungerScore = generateRandomScore(2,8);
+//   let conductScore = generateRandomScore(2,8);
+//   db.query(`INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by)
+//             VALUES ('${pukenkoName}', ${hungerScore}, ${happinessScore},
+//                     ${conductScore}, ${userId});`
+//           ).then(res.end('New Pukenko added - I hope'));
+// };
+
 let createNewPukenko = (req, res) => {
-  let userId = 1;  // This is going to need to received from req?
-  let pukenkoName = 'pukenkoPostMan1';  // this will have to be received from the input box
-  let happinessScore = generateRandomScore(2,8);
-  let hungerScore = generateRandomScore(2,8);
-  let conductScore = generateRandomScore(2,8);
-  db.query(`INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by)
-            VALUES ('${pukenkoName}', ${hungerScore}, ${happinessScore},
-                    ${conductScore}, ${userId});`
-          ).then(res.end('New Pukenko added - I hope'));
+  console.log(req.body);
+  res.send(req.body);
 };
 
 // Need to update this query to move userId and p_ID to users_pukenkos table
@@ -62,9 +68,12 @@ let getPukenko = (req, res) => {
         });
 };
 
-server.get('/', loadHomePage);
-server.get('/index.css', loadCSS);
-server.get('/index.js', loadJavaScript);
+server.use(express.static('./public'))
+
+// server.get('/', renderFile);
+// server.get('/index.css', loadCSS);
+// server.get('/index.js', loadJavaScript);
+server.use(bodyParser.json());
 server.get('/pukenkos/:id', getPukenko);
 server.post('/pukenkos', createNewPukenko);
 server.post('/users', createNewUser);
