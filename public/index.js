@@ -6,6 +6,47 @@ const smoothieButton = document.querySelector('.smoothieButton');
 const junkfoodButton = document.querySelector('.junkfoodButton');
 const homeworkButton = document.querySelector('.homeworkButton');
 const pukenkoPic = document.querySelector('.pumpkinpic');
+const headerLoginButton = document.querySelector(".header_login_button");
+const headerSignUpButton = document.querySelector(".header_signup_button");
+const modalBackground = document.querySelector('.modal-background');
+const modalCloseButton = document.querySelector('.modal-close-button');
+const signUpForm = document.querySelector('.sign-up-form');
+const loginForm = document.querySelector('.login-form');
+const loginUserName = document.querySelector(".login-username");
+const loginPassword = document.querySelector(".login-password");
+const loginSubmit = document.querySelector(".login-submit");
+const signUpUserName = document.querySelector(".sign-up-username");
+const signUpPassword = document.querySelector(".sign-up-password");
+const signUpSubmit = document.querySelector(".sign-up-submit");
+const newPukenkoForm = document.querySelector('.new-pukenko-form');
+const newPukenkoName = document.querySelector('.pukenko-name-input');
+const newPukenkoInputName = document.querySelector('.pukenko-name');
+const newPukenkoSubmit = document.querySelector('.new-pukenko-submit')
+
+let hideModalScreen = () => {
+    modalBackground.classList.add('hidden');
+    loginForm.classList.add('hidden');
+    signUpForm.classList.add('hidden');
+};
+
+let windowOnClick = (event) => {
+    if (event.target === modalBackground) {
+        hideModalScreen();
+    }
+};
+
+let showModalBackground = () => modalBackground.classList.remove('hidden');
+
+let showLoginForm = () => {
+    showModalBackground();
+    loginForm.classList.remove('hidden');
+};
+
+let showSignUpForm = () => {
+    showModalBackground();
+    signUpForm.classList.remove('hidden');
+};
+
 let pukenkoImageArray = ["images/pukenko.jpg", "images/pukenko_onion.jpg", "images/pukenko_dead.jpg", "images/pukenko_jackolantern.jpg"]
 
 let randomScore = (min, max) => {
@@ -85,42 +126,30 @@ homeworkButton.addEventListener('click', function(event) {
     addItemHomework();
 });
 
+let testFetch = (event) => {
+    event.preventDefault();
+    let name = signUpUserName.value;
+    let password = signUpPassword.value;
+    fetch('http://localhost:3000/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+            username: name,
+            userpassword: password
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((data) => {
+        return data.json();
+    })
+};
+
+signUpSubmit.addEventListener('click', testFetch);
+headerLoginButton.addEventListener('click', showLoginForm);
+headerSignUpButton.addEventListener('click', showSignUpForm);
+modalCloseButton.addEventListener('click', hideModalScreen);
+
+
+window.addEventListener('click', windowOnClick);
+
 updateScores();
-
-// function changeIMG(){
-//     if (defaultHappyScore > 0) {
-//         console.log("yes")
-//         pukenkoPic.setAttribute('src', pukenkoImageArray[0]);
-//         }
-//     }
-
-fetch('http://localhost:3000/pukenkos/1').then((data) => {
-    return data.json();
-}).then(data => console.log(data))
-
-
-fetch('http://localhost:3000/pukenkos', {
-    method: 'POST',
-    body: JSON.stringify({
-        test: 'result'
-    }),
-    headers: {
-        "Content-Type": 'application/json'
-    }
-}).then((data) => {
-    return data.json();
-}).then(data => console.log(data))
-
-// fetch('http://localhost:3000/pukenkos/1', {
-//     method: 'POST',
-//     headers: {
-//         // authorization: getItem(Token),
-//         "Content-Type": 'application/json'
-//     },
-//     {
-//         body: JSON.stringify({'whatever object I\'m sending': '''});
-//     }
-
-// }).then((data) => {
-//     return data.json();
-// }).then(data => console.log(data))
