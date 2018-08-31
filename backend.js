@@ -68,14 +68,16 @@ let getPukenko = (req, res) => {
         });
 };
 
-server.use(express.static('./public'))
+let userSignup = (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
+};
 
-// server.get('/', renderFile);
-// server.get('/index.css', loadCSS);
-// server.get('/index.js', loadJavaScript);
+server.use(express.static('./public'))
 server.use(bodyParser.json());
+server.post('/signup', userSignup);
+
 server.get('/pukenkos/:id', getPukenko);
-server.post('/pukenkos', createNewPukenko);
 server.post('/users', createNewUser);
 
 server.listen(3000);
