@@ -1,6 +1,10 @@
 html, body {
     height: 100%;
-    width: 100%
+    width: 100%;
+    margin: 0;
+    --btn-color: darkorange;
+    --modal-background: rgba(0,0,0,.6);
+    font-size: 10px;
 }
 
 .main_container {
@@ -9,25 +13,27 @@ html, body {
 }
 
 .fixed_header {
-   height: 35%;
+   height: 40%;
    z-index: 100;
    background-color: white;
 }
 
 .lower_container {
-    height: 65%;
+    height: 60%;
     overflow-y: scroll;
 }
 
 .scoreboard {
+    height: 25%;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    margin-top: 2em;
+    /* margin-top: 2em; */
     border-bottom: solid 1px;
 }
 
 .headerpic_container {
+    height: 55%;
     display: flex;
     justify-content: space-around;
     /* height: 130px;
@@ -35,8 +41,8 @@ html, body {
 }
 
 .pumpkinpic {
-    width: 130px;
-    height: 130px;
+    width: 13rem;
+    height: 13rem;
 }
 
 p{
@@ -51,7 +57,7 @@ p{
 
 
 button {
-    background-color: darkorange;
+    background-color: var(--btn-color);
     border: none;
     color: white;
     width: 180px;
@@ -59,7 +65,46 @@ button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    font-size: 1.6rem;
+    margin: .4em .2em;
 }
 
+/* -----  HEADER NAVIGATION BAR ----------- */
+.header_bar_container {
+    height: 20%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--btn-color);
+}
+
+.header_bar_title {
+    margin: 0;
+    padding-left: .8em;
+    text-transform: uppercase;
+    color: white;
+    font-size: 2rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.header_nav_container {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header_login_button, .header_signup_button {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.header_bar_text {
+    margin: 0;
+    padding-right: .8em;
+    color: white;
+    font-size: 1.5rem;
+}
