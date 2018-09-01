@@ -20,13 +20,14 @@ const signUpPassword = document.querySelector(".sign-up-password");
 const signUpSubmit = document.querySelector(".sign-up-submit");
 const newPukenkoForm = document.querySelector('.new-pukenko-form');
 const newPukenkoName = document.querySelector('.pukenko-name-input');
-const newPukenkoInputName = document.querySelector('.pukenko-name');
 const newPukenkoSubmit = document.querySelector('.new-pukenko-submit')
+
 
 let hideModalScreen = () => {
     modalBackground.classList.add('hidden');
     loginForm.classList.add('hidden');
     signUpForm.classList.add('hidden');
+    newPukenkoForm.classList.add('hidden');
 };
 
 let windowOnClick = (event) => {
@@ -80,7 +81,6 @@ let updateScores = () => {
     };
 };
 
-
 let addItemSmoothie = () => {
     let newLogItem = document.createElement('li');
     newLogItem.textContent = `You gave Pukenko a Smoothie. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`;
@@ -126,7 +126,7 @@ homeworkButton.addEventListener('click', function(event) {
     addItemHomework();
 });
 
-let testFetch = (event) => {
+let createNewUser = (event) => {
     event.preventDefault();
     let name = signUpUserName.value;
     let password = signUpPassword.value;
@@ -137,19 +137,19 @@ let testFetch = (event) => {
             userpassword: password
         }),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         }
-    }).then((data) => {
-        return data.json();
+    }).then( () => {
+        signUpForm.classList.add('hidden');
+        newPukenkoForm.classList.remove('hidden');
     })
 };
 
-signUpSubmit.addEventListener('click', testFetch);
+signUpSubmit.addEventListener('click', createNewUser);
 headerLoginButton.addEventListener('click', showLoginForm);
 headerSignUpButton.addEventListener('click', showSignUpForm);
 modalCloseButton.addEventListener('click', hideModalScreen);
-
-
 window.addEventListener('click', windowOnClick);
 
 updateScores();
