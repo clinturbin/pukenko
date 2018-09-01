@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-const dbConfig = 'postgres://clint@localhost:5432/pukenko';
+const dbConfig = 'postgres://ubuntu@localhost:5432/pukenko';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -47,10 +47,28 @@ let newUserSignUp = (req, res) => {
   .then(res.end())
 };
 
+let getUserInfoQuery = (userName, userPassword) => {
+  return `SELECT *
+          FROM users
+          WHERE username = '${userName}' AND password = '${userPassword}';`;
+};
+
+
+let userLogin = (req, res) => {
+  let userName = req.params.name;
+  let userPassword = req.params.password;
+  db.one(getUserInfoQuery(userName, userPassword))
+  .then( (data) => {
+    res.send(data);
+  })
+  .catch((error) => {
+    res.send({id: "error"});
+  })
+};
+
 server.use(bodyParser.json());
 server.use(express.static('./public'))
 server.post('/signup', newUserSignUp);
-server.get('/pukenkos/:id', getPukenko);
-server.post('/users', createNewUser);
+server.get('/login/:name&:password', userLogin);
 
 server.listen(3000);

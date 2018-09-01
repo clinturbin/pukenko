@@ -14,20 +14,28 @@ const signUpForm = document.querySelector('.sign-up-form');
 const loginForm = document.querySelector('.login-form');
 const loginUserName = document.querySelector(".login-username");
 const loginPassword = document.querySelector(".login-password");
-const loginSubmit = document.querySelector(".login-submit");
+const loginSubmitButton = document.querySelector(".login-submit");
 const signUpUserName = document.querySelector(".sign-up-username");
 const signUpPassword = document.querySelector(".sign-up-password");
-const signUpSubmit = document.querySelector(".sign-up-submit");
+const signUpSubmitButton = document.querySelector(".sign-up-submit");
 const newPukenkoForm = document.querySelector('.new-pukenko-form');
 const newPukenkoName = document.querySelector('.pukenko-name-input');
-const newPukenkoSubmit = document.querySelector('.new-pukenko-submit')
+const newPukenkoSubmit = document.querySelector('.new-pukenko-submit');
+const errorDisplayPage = document.querySelector('.error-page');
+const errorPageOkButton = document.querySelector('.error-page-ok-button');
+const myPukenkosPage = document.querySelector('.my-pukenkos-page');
+const myPukenkosUserName = document.querySelector('.my-pukenkos-username');
+const myPukenkosPageNewButton = document.querySelector('.my-pukenkos-page-new-button');
 
+let currentUser;
 
 let hideModalScreen = () => {
     modalBackground.classList.add('hidden');
     loginForm.classList.add('hidden');
     signUpForm.classList.add('hidden');
     newPukenkoForm.classList.add('hidden');
+    myPukenkosPage.classList.add('hidden');
+    errorDisplayPage.classList.add('hidden');
 };
 
 let windowOnClick = (event) => {
@@ -100,8 +108,6 @@ let addItemHomework = () => {
     actionLog.appendChild(newLogItem);
 };
 
- 
-
 smoothieButton.addEventListener('click', function(event) {
     event.preventDefault();
     defaultHealthScore += 1;
@@ -146,7 +152,61 @@ let createNewUser = (event) => {
     })
 };
 
-signUpSubmit.addEventListener('click', createNewUser);
+let loginFormSubmit = (event) => {
+    event.preventDefault();
+    let userName = loginUserName.value;
+    let userPassword = loginPassword.value;
+    let url = `http://localhost:3000/login/${userName}&${userPassword}`;
+    fetch(url).then((data) => {
+        return data.json();
+    })
+    .then( data => {
+        if (data.id === 'error') {
+            openErrorPage('login');
+            errorDisplayPage.classList.remove('hidden');
+        } else {
+            currentUser = {
+                id: data.id,
+                username: data.username
+            };
+            myPukenkosUserName.textContent = currentUser.username;
+            openMyPukenkosPage();
+        }
+    })
+};
+
+let openErrorPage = (form) => {
+    if (form === 'login') {
+        loginForm.classList.add('hidden');
+    } else if (form === 'signup') {
+        signUpForm.classList.add('hidden');
+    }
+    errorDisplayPage.classList.remove('hidden');
+};
+
+let closeErrorPage = (event) => {
+    event.preventDefault();
+    hideModalScreen();
+};
+
+let openNewPukenkoForm = (event) => {
+    event.preventDefault();
+    signUpForm.classList.add('hidden');
+    myPukenkosPage.classList.add('hidden');
+    loginForm.classList.add('hidden');
+    newPukenkoForm.classList.remove('hidden');
+};
+
+let openMyPukenkosPage = () => {
+    loginForm.classList.add('hidden');
+    myPukenkosPage.classList.remove('hidden');
+    modalBackground.classList.remove('hidden');
+};
+
+errorPageOkButton.addEventListener('click', closeErrorPage);
+myPukenkosPageNewButton.addEventListener('click', openNewPukenkoForm);
+signUpSubmitButton.addEventListener('click', createNewUser);
+loginSubmitButton.addEventListener('click', loginFormSubmit);
 headerLoginButton.addEventListener('click', showLoginForm);
 headerSignUpButton.addEventListener('click', showSignUpForm);
 modalCloseButton.addEventListener('click', hideModalScreen);

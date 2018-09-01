@@ -169,6 +169,26 @@ button {
     border-radius: .5em;
 }
 
+.my-pukenkos-username {
+    margin: 0;
+    align-self: flex-end;
+    padding: .5em .5em 0 0; 
+}
+
+.my-pukenkos-display-container {
+    width: 80%;
+    height: 60%;
+    border: .1em solid black;
+}
+
+.my-pukenkos-title {
+    margin: .2em 0;
+}
+
+.my-pukenkos-page-new-button {
+    margin-top: .5em;
+}
+
 .hidden {
     display: none;
 }
