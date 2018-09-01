@@ -4,36 +4,11 @@ const pg = require('pg-promise')();
 const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 let server = express();
 
 let generateRandomScore = (min, max) => Math.floor(Math.random() * (max - min) + min);
-
-let loadHomePage = (req, res) => {
-  fs.readFile('index.html', (err, data) => {
-      res.end(data);
-  })
-};
-
-let loadCSS = (req, res) => {
-  fs.readFile('index.css', (err, data) => {
-      res.end(data);
-  })
-};
-
-let loadJavaScript = (req, res) => {
-  fs.readFile('index.js', (err, data) => {
-      res.end(data);
-  })
-};
-
-let createNewUser = (req, res) => {
-    let userName = 'Test3';
-    let userPassword = '34567';
-    db.query(`INSERT INTO users (username, password) 
-              VALUES             ('${userName}', '${userPassword}');`
-            ).then(res.end('New User added to db - I hope'));
-};
 
 // Create new Pukenko
 // let createNewPukenko = (req, res) => {
@@ -48,14 +23,6 @@ let createNewUser = (req, res) => {
 //           ).then(res.end('New Pukenko added - I hope'));
 // };
 
-let createNewPukenko = (req, res) => {
-  console.log(req.body);
-  res.send(req.body);
-};
-
-// Need to update this query to move userId and p_ID to users_pukenkos table
-
-// Gets specific Pukenko info (returns an object with name and pukenko stats)
 let getPukenko = (req, res) => {
   let pukenkoId = req.params.id;
   db.one(`SELECT * 
@@ -68,15 +35,21 @@ let getPukenko = (req, res) => {
         });
 };
 
-let userSignup = (req, res) => {
-  console.log(req.body);
-  res.send(req.body);
+let newUserQuery = (userName, userPassword) => {
+  return `INSERT INTO users (username, password)
+          VALUES ('${userName}', '${userPassword}');`;
 };
 
-server.use(express.static('./public'))
-server.use(bodyParser.json());
-server.post('/signup', userSignup);
+let newUserSignUp = (req, res) => {
+  let userName = req.body.username;
+  let userPassword = req.body.userpassword;
+  db.query(newUserQuery(userName, userPassword))
+  .then(res.end())
+};
 
+server.use(bodyParser.json());
+server.use(express.static('./public'))
+server.post('/signup', newUserSignUp);
 server.get('/pukenkos/:id', getPukenko);
 server.post('/users', createNewUser);
 
