@@ -2,7 +2,7 @@ CREATE DATABASE pukenko;
 
 CREATE TABLE users (
     id serial PRIMARY KEY,
-    userName character varying(255) NOT NULL,
+    username character varying(255) NOT NULL,
     password character varying(255) NOT NULL
 );
 

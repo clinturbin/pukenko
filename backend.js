@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-const dbConfig = 'postgres://ubuntu@localhost:5432/pukenko';
+const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -9,19 +9,6 @@ const jwt = require('jsonwebtoken');
 let server = express();
 
 let generateRandomScore = (min, max) => Math.floor(Math.random() * (max - min) + min);
-
-// Create new Pukenko
-// let createNewPukenko = (req, res) => {
-//   let userId = 1;  // This is going to need to received from req?
-//   let pukenkoName = 'pukenkoPostMan1';  // this will have to be received from the input box
-//   let happinessScore = generateRandomScore(2,8);
-//   let hungerScore = generateRandomScore(2,8);
-//   let conductScore = generateRandomScore(2,8);
-//   db.query(`INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by)
-//             VALUES ('${pukenkoName}', ${hungerScore}, ${happinessScore},
-//                     ${conductScore}, ${userId});`
-//           ).then(res.end('New Pukenko added - I hope'));
-// };
 
 let getPukenko = (req, res) => {
   let pukenkoId = req.params.id;
@@ -44,7 +31,9 @@ let newUserSignUp = (req, res) => {
   let userName = req.body.username;
   let userPassword = req.body.userpassword;
   db.query(newUserQuery(userName, userPassword))
-  .then(res.end())
+  .then( () => {
+    res.send(req.body)
+  })
 };
 
 let getUserInfoQuery = (userName, userPassword) => {
@@ -66,9 +55,27 @@ let userLogin = (req, res) => {
   })
 };
 
+let createPukenkoQuery = (name, hunger, happiness, conduct, createdBy) => {
+  return `INSERT INTO pukenkos (name, hunger, happiness, conduct, created_by) 
+          VALUES ('${name}', ${hunger}, ${happiness}, ${conduct}, ${createdBy});`; 
+};
+
+let createNewPukenko = (req, res) => {
+  let pukenkoName = req.body.name;
+  let hunger = generateRandomScore(2, 8);
+  let happiness = generateRandomScore(2, 8);
+  let conduct = generateRandomScore(2, 8);
+  let createdBy = req.body.userid;
+  db.query(createPukenkoQuery(pukenkoName, hunger, happiness, conduct, createdBy))
+  .then( () => {
+    res.send(req.body);
+  })
+};
+
 server.use(bodyParser.json());
 server.use(express.static('./public'))
 server.post('/signup', newUserSignUp);
 server.get('/login/:name&:password', userLogin);
+server.post('/pukenkos', createNewPukenko);
 
 server.listen(3000);
