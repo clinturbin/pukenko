@@ -20,7 +20,7 @@ const signUpPassword = document.querySelector(".sign-up-password");
 const signUpSubmitButton = document.querySelector(".sign-up-submit");
 const newPukenkoForm = document.querySelector('.new-pukenko-form');
 const newPukenkoName = document.querySelector('.pukenko-name-input');
-const newPukenkoSubmit = document.querySelector('.new-pukenko-submit');
+const newPukenkoSubmitButton = document.querySelector('.new-pukenko-submit');
 const errorDisplayPage = document.querySelector('.error-page');
 const errorPageOkButton = document.querySelector('.error-page-ok-button');
 const myPukenkosPage = document.querySelector('.my-pukenkos-page');
@@ -132,7 +132,7 @@ homeworkButton.addEventListener('click', function(event) {
     addItemHomework();
 });
 
-let createNewUser = (event) => {
+let signUpSubmit = (event) => {
     event.preventDefault();
     let name = signUpUserName.value;
     let password = signUpPassword.value;
@@ -146,9 +146,14 @@ let createNewUser = (event) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
-    }).then( () => {
-        signUpForm.classList.add('hidden');
-        newPukenkoForm.classList.remove('hidden');
+    })
+    .then((data) => {
+        return data.json();
+    })
+    .then(data => {
+        let userName = data.username;
+        let userPassword = data.userpassword;
+        loginUser(userName, userPassword, 'signup');
     })
 };
 
@@ -156,23 +161,32 @@ let loginFormSubmit = (event) => {
     event.preventDefault();
     let userName = loginUserName.value;
     let userPassword = loginPassword.value;
+    loginUser(userName, userPassword, 'login');
+};
+
+let loginUser = (userName, userPassword, sourceForm) => {
     let url = `http://localhost:3000/login/${userName}&${userPassword}`;
     fetch(url).then((data) => {
         return data.json();
     })
     .then( data => {
-        if (data.id === 'error') {
-            openErrorPage('login');
-            errorDisplayPage.classList.remove('hidden');
-        } else {
-            currentUser = {
-                id: data.id,
-                username: data.username
-            };
-            myPukenkosUserName.textContent = currentUser.username;
-            openMyPukenkosPage();
-        }
+        console.log(data);
+        checkForLoginError(data, sourceForm);
     })
+};
+
+let checkForLoginError = (data, sourceForm) => {
+    if (data.id === 'error') {
+        openErrorPage(sourceForm);
+        errorDisplayPage.classList.remove('hidden');
+    } else {
+        currentUser = {
+            id: data.id,
+            username: data.username
+        };
+        myPukenkosUserName.textContent = currentUser.username;
+        openMyPukenkosPage();
+    }
 };
 
 let openErrorPage = (form) => {
@@ -199,13 +213,37 @@ let openNewPukenkoForm = (event) => {
 
 let openMyPukenkosPage = () => {
     loginForm.classList.add('hidden');
+    signUpForm.classList.add('hidden');
     myPukenkosPage.classList.remove('hidden');
     modalBackground.classList.remove('hidden');
 };
 
+let newPukenkoSubmit = (event) => {
+    event.preventDefault();
+    let body = {
+        userid: currentUser.id,
+        name: newPukenkoName.value
+    };
+    fetch('http://localhost:3000/pukenkos', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then((data) => {
+        return data.json();
+    })
+    .then(data => {
+        console.log(data.name + ': has been added to DB');
+    })
+};
+
 errorPageOkButton.addEventListener('click', closeErrorPage);
 myPukenkosPageNewButton.addEventListener('click', openNewPukenkoForm);
-signUpSubmitButton.addEventListener('click', createNewUser);
+signUpSubmitButton.addEventListener('click', signUpSubmit);
+newPukenkoSubmitButton.addEventListener('click', newPukenkoSubmit);
 loginSubmitButton.addEventListener('click', loginFormSubmit);
 headerLoginButton.addEventListener('click', showLoginForm);
 headerSignUpButton.addEventListener('click', showSignUpForm);
