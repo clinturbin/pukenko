@@ -192,3 +192,25 @@ button {
 .hidden {
     display: none;
 }
+
+/* -----  Pukenko Listing Display ------- */
+.pukenko-listing-container {
+    width: 100%;
+    border-bottom: 1px solid black;
+    background-color: lightgray;
+}
+
+.pukenko-listing-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    padding: .5em;
+}
+
+.pukenko-listing-stats-container {
+    display: flex;
+    justify-content: space-evenly;
+    font-size: 1.2rem;
+    margin: 0;
+    padding-bottom: .5em;
+}

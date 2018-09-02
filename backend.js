@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-const dbConfig = 'postgres://ubuntu@localhost:5432/pukenkos';
+const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -9,18 +9,6 @@ const jwt = require('jsonwebtoken');
 let server = express();
 
 let generateRandomScore = (min, max) => Math.floor(Math.random() * (max - min) + min);
-
-let getPukenko = (req, res) => {
-  let pukenkoId = req.params.id;
-  db.one(`SELECT * 
-          FROM pukenkos 
-          WHERE pukenkos.id = '${pukenkoId}';`
-        ).then((results) => {
-          res.send(results);
-        }).catch((e) => {
-          res.send('No Such Pukenko');
-        });
-};
 
 let newUserQuery = (userName, userPassword) => {
   return `INSERT INTO users (username, password)
@@ -41,7 +29,6 @@ let getUserInfoQuery = (userName, userPassword) => {
           FROM users
           WHERE username = '${userName}' AND password = '${userPassword}';`;
 };
-
 
 let userLogin = (req, res) => {
   let userName = req.params.name;
@@ -104,6 +91,21 @@ let getPukenkoByNameAndUser = (req, res) => {
   })
 };
 
+let getUserPukenkosQuery = (userid) => {
+  return `SELECT * FROM pukenkos WHERE created_by = ${userid};`
+};
+
+let getUserPukenkos = (req, res) => {
+  let userid = req.params.user;
+  db.query(getUserPukenkosQuery(userid))
+  .then( (data) => {
+    res.send(data);
+  })
+  .catch( (error) => {
+    res.send({id: 'error'});
+  })
+};
+
 server.use(bodyParser.json());
 server.use(express.static('./public'))
 server.post('/signup', newUserSignUp);
@@ -111,5 +113,6 @@ server.get('/login/:name&:password', userLogin);
 server.post('/pukenkos', createNewPukenko);
 server.post('/actions', updateActionLog);
 server.get('/pukenkos/:name&:user', getPukenkoByNameAndUser);
+server.get('/pukenkos/:user', getUserPukenkos);
 
 server.listen(3000);
