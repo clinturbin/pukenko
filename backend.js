@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-const dbConfig = 'postgres://clint@localhost:5432/pukenko';
+const dbConfig = 'postgres://ubuntu@localhost:5432/pukenkos';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -72,10 +72,44 @@ let createNewPukenko = (req, res) => {
   })
 };
 
+let updateActionLogQuery = (userId, pukenkoId, actionId) => {
+  return `INSERT INTO action_log (user_id, pukenko_id, action_id) 
+          VALUES (${userId}, ${pukenkoId}, ${actionId});`;
+};
+
+let updateActionLog = (req, res) => {
+  let userId = req.body.userId;
+  let pukenkoId = req.body.pukenkoId;
+  let actionId = req.body.actionId;
+  db.query(updateActionLogQuery(userId, pukenkoId, actionId))
+  .then( () => {
+    res.send(req.body);
+  })
+};
+
+let getPukenkoByNameQuery = (name, user) => {
+  return `SELECT * FROM pukenkos
+          WHERE name = '${name}' AND created_by = ${user};`;
+};
+
+let getPukenkoByNameAndUser = (req, res) => {
+  let pukenkoName = req.params.name;
+  let userid = req.params.user;
+  db.one(getPukenkoByNameQuery(pukenkoName, userid))
+  .then( (data) => {
+    res.send(data);
+  })
+  .catch((error) => {
+    res.send({id: "error"});
+  })
+};
+
 server.use(bodyParser.json());
 server.use(express.static('./public'))
 server.post('/signup', newUserSignUp);
 server.get('/login/:name&:password', userLogin);
 server.post('/pukenkos', createNewPukenko);
+server.post('/actions', updateActionLog);
+server.get('/pukenkos/:name&:user', getPukenkoByNameAndUser);
 
 server.listen(3000);

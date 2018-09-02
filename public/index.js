@@ -27,7 +27,39 @@ const myPukenkosPage = document.querySelector('.my-pukenkos-page');
 const myPukenkosUserName = document.querySelector('.my-pukenkos-username');
 const myPukenkosPageNewButton = document.querySelector('.my-pukenkos-page-new-button');
 
+let pukenkoImageArray = ["images/pukenko.jpg", 
+                        "images/pukenko_onion.jpg", 
+                        "images/pukenko_dead.jpg", 
+                        "images/pukenko_jackolantern.jpg"
+                        ];
+
 let currentUser;
+let currentPukenko;
+let happinessScore;
+let healthScore;
+let conductScore;
+
+let displayGameScreen = () => {
+    pukenkoPic.setAttribute('src', pukenkoImageArray[0]);
+    if (currentPukenko) {
+        displayPukenkoScreen();
+    } else {
+        displayBlankScreen();
+    }
+    hideModalScreen();
+};
+
+let displayBlankScreen = () => {
+    healthScoreIntoDom.textContent = '';
+    happyScoreIntoDom.textContent = '';
+    conductScoreIntoDom.textContent = '';
+};
+
+let displayPukenkoScreen = () => {
+    healthScoreIntoDom.textContent = healthScore;
+    happyScoreIntoDom.textContent = happinessScore;
+    conductScoreIntoDom.textContent = conductScore;
+};
 
 let hideModalScreen = () => {
     modalBackground.classList.add('hidden');
@@ -56,34 +88,24 @@ let showSignUpForm = () => {
     signUpForm.classList.remove('hidden');
 };
 
-let pukenkoImageArray = ["images/pukenko.jpg", "images/pukenko_onion.jpg", "images/pukenko_dead.jpg", "images/pukenko_jackolantern.jpg"]
-
-let randomScore = (min, max) => {
-    return Math.floor(Math.random() * (max - min) + min);
- };
-
 let endGame = () => {
     alert("You killed Pukenko");
 }
 
-let defaultHappyScore = randomScore(2,8);
-let defaultHealthScore = randomScore(2,8);
-let defaultConductScore = randomScore(2,8);
-
 let updateScores = () => {
-    healthScoreIntoDom.textContent = defaultHealthScore;
-    happyScoreIntoDom.textContent = defaultHappyScore;
-    conductScoreIntoDom.textContent = defaultConductScore;
-    if (defaultHappyScore && defaultHealthScore && defaultConductScore > 0) {
+    healthScoreIntoDom.textContent = healthScore;
+    happyScoreIntoDom.textContent = happinessScore;
+    conductScoreIntoDom.textContent = conductScore;
+    if (happinessScore && healthScore && conductScore > 0) {
         pukenkoPic.setAttribute('src', pukenkoImageArray[0]);
         };
-    if (defaultHappyScore <= 0){
+    if (happinessScore <= 0){
         pukenkoPic.setAttribute('src', pukenkoImageArray[1]);
     };
-    if (defaultConductScore <= 0){
+    if (conductScore <= 0){
         pukenkoPic.setAttribute('src', pukenkoImageArray[3]);
     };
-    if (defaultHealthScore <= 0){
+    if (healthScore <= 0){
         pukenkoPic.setAttribute('src', pukenkoImageArray[2]);
         endGame();
     };
@@ -91,43 +113,43 @@ let updateScores = () => {
 
 let addItemSmoothie = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You gave Pukenko a Smoothie. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`;
+    newLogItem.textContent = `You gave Pukenko a Smoothie. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`;
     actionLog.appendChild(newLogItem);
     
 };
 
 let addItemJunkfood = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You gave Pukenko Junkfood. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`
+    newLogItem.textContent = `You gave Pukenko Junkfood. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`
     actionLog.appendChild(newLogItem);
 };
 
 let addItemHomework = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You made Pukenko do homework. Happiness:${defaultHappyScore} Health:${defaultHealthScore} Conduct:${defaultConductScore}`
+    newLogItem.textContent = `You made Pukenko do homework. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`
     actionLog.appendChild(newLogItem);
 };
 
 smoothieButton.addEventListener('click', function(event) {
     event.preventDefault();
-    defaultHealthScore += 1;
+    healthScore += 1;
     updateScores();
     addItemSmoothie();
 });
 
 junkfoodButton.addEventListener('click', function(event) {
     event.preventDefault();
-    defaultHealthScore -= 1;
-    defaultHappyScore += 3;
-    defaultConductScore -= 1;
+    healthScore -= 1;
+    happinessScore += 3;
+    conductScore -= 1;
     updateScores();
     addItemJunkfood();
 });
 
 homeworkButton.addEventListener('click', function(event) {
     event.preventDefault();
-    defaultConductScore += 1;
-    defaultHappyScore -= 1;
+    conductScore += 1;
+    happinessScore -= 1;
     updateScores();
     addItemHomework();
 });
@@ -236,7 +258,46 @@ let newPukenkoSubmit = (event) => {
         return data.json();
     })
     .then(data => {
-        console.log(data.name + ': has been added to DB');
+        getNewPukenkoInfo(data);
+    })
+};
+
+let getNewPukenkoInfo = (data) => {
+    let pukenkoName = data.name;
+    let userid = data.userid;
+    let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
+    fetch(url).then((data) => {
+        return data.json();
+    })
+    .then( data => {
+        currentPukenko = data;
+        let userId = currentUser.id;
+        let pukenkoId = currentPukenko.id;
+        let actionId = 1; // 1 is the id for new Pukenkos
+        updateActionLog(userId, pukenkoId, actionId);
+        console.log(currentPukenko);
+        happinessScore = currentPukenko.happiness;
+        healthScore = currentPukenko.hunger;
+        conductScore = currentPukenko.conduct;
+        displayGameScreen();
+    })
+};
+
+let updateActionLog = (userId, pukenkoId, actionId) => {
+    let body = {userId, pukenkoId, actionId};
+    fetch('http://localhost:3000/actions', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then((data) => {
+        return data.json();
+    })
+    .then(data => {
+        console.log(data + ' added to action Log');
     })
 };
 
@@ -250,4 +311,4 @@ headerSignUpButton.addEventListener('click', showSignUpForm);
 modalCloseButton.addEventListener('click', hideModalScreen);
 window.addEventListener('click', windowOnClick);
 
-updateScores();
+displayGameScreen();
