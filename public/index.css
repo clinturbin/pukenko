@@ -179,6 +179,7 @@ button {
     width: 80%;
     height: 60%;
     border: .1em solid black;
+    overflow-y: scroll;
 }
 
 .my-pukenkos-title {
@@ -213,4 +214,16 @@ button {
     font-size: 1.2rem;
     margin: 0;
     padding-bottom: .5em;
+}
+
+.listing-stat-container {
+    display: flex;
+}
+
+.listing-stat-container p {
+    margin: 0;
+}
+
+.listing-stat {
+    padding-left: .5em;
 }
