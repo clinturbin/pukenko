@@ -26,6 +26,7 @@ const errorPageOkButton = document.querySelector('.error-page-ok-button');
 const myPukenkosPage = document.querySelector('.my-pukenkos-page');
 const myPukenkosUserName = document.querySelector('.my-pukenkos-username');
 const myPukenkosPageNewButton = document.querySelector('.my-pukenkos-page-new-button');
+const myPukenkosDisplayContainer = document.querySelector('.my-pukenkos-display-container');
 
 let pukenkoImageArray = ["images/pukenko.jpg", 
                         "images/pukenko_onion.jpg", 
@@ -192,7 +193,7 @@ let loginUser = (userName, userPassword, sourceForm) => {
         return data.json();
     })
     .then( data => {
-        console.log(data);
+        // console.log(data);
         checkForLoginError(data, sourceForm);
     })
 };
@@ -238,6 +239,7 @@ let openMyPukenkosPage = () => {
     signUpForm.classList.add('hidden');
     myPukenkosPage.classList.remove('hidden');
     modalBackground.classList.remove('hidden');
+    getMyPukenkos();
 };
 
 let newPukenkoSubmit = (event) => {
@@ -258,11 +260,11 @@ let newPukenkoSubmit = (event) => {
         return data.json();
     })
     .then(data => {
-        getNewPukenkoInfo(data);
+        getPukenko(data);
     })
 };
 
-let getNewPukenkoInfo = (data) => {
+let getPukenko = (data) => {
     let pukenkoName = data.name;
     let userid = data.userid;
     let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
@@ -275,12 +277,81 @@ let getNewPukenkoInfo = (data) => {
         let pukenkoId = currentPukenko.id;
         let actionId = 1; // 1 is the id for new Pukenkos
         updateActionLog(userId, pukenkoId, actionId);
-        console.log(currentPukenko);
+        // console.log(currentPukenko);
         happinessScore = currentPukenko.happiness;
         healthScore = currentPukenko.hunger;
         conductScore = currentPukenko.conduct;
         displayGameScreen();
     })
+};
+
+let getMyPukenkos = () => {
+    let url = `http://localhost:3000/users/${currentUser.id}/pukenkos`;
+    fetch(url).then((data) => {
+        return data.json();
+    }).then( data => {
+        clearMyPukenkos();
+        data.forEach( (pukenko) => {
+            let id = pukenko.id;
+            let name = pukenko.name;
+            let health = pukenko.hunger;
+            let happiness = pukenko.happiness;
+            let conduct = pukenko.conduct;
+            addPukenkoListing(id, name, health, happiness, conduct);
+        })
+    })
+};
+
+let clearMyPukenkos = () => {
+    let myPukenkos = document.querySelectorAll('.pukenko-listing-container');
+    myPukenkos.forEach((pukenko) => {
+        myPukenkosDisplayContainer.removeChild(pukenko);
+    })
+};
+
+let addPukenkoListing = (id, name, health, happiness, conduct) => {
+    let listingContainer = document.createElement('div');
+    listingContainer.classList.add('pukenko-listing-container');
+    listingContainer.appendChild(addListingName(name));
+    listingContainer.appendChild(addPukenkoStatsContainer(health, happiness, conduct));
+    listingContainer.addEventListener('click', () => {
+        // console.log(name + " was clicked")
+        let data = {
+            name: name,
+            userid: currentUser.id
+        };
+        getPukenko(data);
+    });
+    myPukenkosDisplayContainer.appendChild(listingContainer);
+};
+
+let addListingName = (name) => {
+    let listingName = document.createElement('p');
+    listingName.classList.add('pukenko-listing-name');
+    listingName.textContent = name;
+    return listingName;
+};
+
+let addPukenkoStatsContainer = (health, happiness, conduct) => {
+    let statsContainer = document.createElement('div');
+    statsContainer.classList.add('pukenko-listing-stats-container');
+    statsContainer.appendChild(addSingleStatContainer(health, 'health'));
+    statsContainer.appendChild(addSingleStatContainer(happiness, 'happiness'));
+    statsContainer.appendChild(addSingleStatContainer(conduct, 'conduct'));
+    return statsContainer;
+};
+
+let addSingleStatContainer = (stat, title) => {
+    let listingStatContainer = document.createElement('div');
+    listingStatContainer.classList.add('listing-stat-container');
+    let titleElement = document.createElement('p');
+    titleElement.textContent = title;
+    listingStatContainer.appendChild(titleElement);
+    let statElement = document.createElement('p');
+    statElement.classList.add('listing-stat');
+    statElement.textContent = stat;
+    listingStatContainer.appendChild(statElement);
+    return listingStatContainer;
 };
 
 let updateActionLog = (userId, pukenkoId, actionId) => {
