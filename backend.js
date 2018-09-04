@@ -1,8 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-// const dbConfig = 'postgres://ubuntu:ubupukenko@localhost:5432/pukenkos';
-const dbConfig = 'postgres://clint@localhost:5432/pukenko';
+const dbConfig = 'postgres://ubuntu@localhost:5432/pukenkos';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
