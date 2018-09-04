@@ -1,7 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
-const dbConfig = 'postgres://ubuntu:ubupukenko@localhost:5432/pukenkos';
+// const dbConfig = 'postgres://ubuntu:ubupukenko@localhost:5432/pukenkos';
+const dbConfig = 'postgres://clint@localhost:5432/pukenko';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -59,16 +60,17 @@ let createNewPukenko = (req, res) => {
   })
 };
 
-let updateActionLogQuery = (userId, pukenkoId, actionId) => {
-  return `INSERT INTO action_log (user_id, pukenko_id, action_id) 
-          VALUES (${userId}, ${pukenkoId}, ${actionId});`;
+let updateActionLogQuery = (userId, pukenkoId, actionId, message) => {
+  return `INSERT INTO action_log (user_id, pukenko_id, action_id, message) 
+          VALUES (${userId}, ${pukenkoId}, ${actionId}, '${message}');`;
 };
 
 let updateActionLog = (req, res) => {
   let userId = req.body.userId;
   let pukenkoId = req.body.pukenkoId;
   let actionId = req.body.actionId;
-  db.query(updateActionLogQuery(userId, pukenkoId, actionId))
+  let message = req.body.message;
+  db.query(updateActionLogQuery(userId, pukenkoId, actionId, message))
   .then( () => {
     res.send(req.body);
   })
@@ -106,6 +108,21 @@ let getMyPukenkos = (req, res) => {
   })
 };
 
+let updatePukenkoQuery = (id, hunger, happiness, conduct) => {
+  return `UPDATE pukenkos
+          SET hunger = ${hunger}, happiness = ${happiness}, conduct = ${conduct}
+          WHERE id = ${id};`;
+};
+
+let updatePukenko = (req, res) => {
+  let id = req.body.id;
+  let hunger = req.body.hunger;
+  let happiness = req.body.happiness;
+  let conduct = req.body.conduct;
+  db.query(updatePukenkoQuery(id, hunger, happiness, conduct))
+  .then(res.end())
+};
+
 server.use(bodyParser.json());
 server.use(express.static('./public'))
 server.post('/signup', newUserSignUp);
@@ -114,5 +131,6 @@ server.post('/pukenkos', createNewPukenko);
 server.post('/actions', updateActionLog);
 server.get('/pukenkos/:name&:user', getPukenkoByNameAndUser);
 server.get('/users/:id/pukenkos', getMyPukenkos);
+server.put('/pukenkos/:id', updatePukenko);
 
 server.listen(3000);

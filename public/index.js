@@ -47,6 +47,7 @@ let displayGameScreen = () => {
     } else {
         displayBlankScreen();
     }
+    clearActionLogDisplay();
     hideModalScreen();
 };
 
@@ -91,9 +92,10 @@ let showSignUpForm = () => {
 
 let endGame = () => {
     alert("You killed Pukenko");
-}
+};
 
 let updateScores = () => {
+    updatePukenkoTable();
     healthScoreIntoDom.textContent = healthScore;
     happyScoreIntoDom.textContent = happinessScore;
     conductScoreIntoDom.textContent = conductScore;
@@ -114,26 +116,35 @@ let updateScores = () => {
 
 let addItemSmoothie = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You gave Pukenko a Smoothie. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`;
+    newLogItem.classList.add('.new-log-item');
+    let message = `You gave ${currentPukenko.name} a Smoothie. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`;
+    newLogItem.textContent = message;
     actionLog.appendChild(newLogItem);
-    
+    updateActionLog(currentUser.id, currentPukenko.id, 2, message);
 };
 
 let addItemJunkfood = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You gave Pukenko Junkfood. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`
+    newLogItem.classList.add('.new-log-item');
+    let message = `You gave ${currentPukenko.name} Junkfood. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`;
+    newLogItem.textContent = message;
     actionLog.appendChild(newLogItem);
+    updateActionLog(currentUser.id, currentPukenko.id, 3, message);
 };
 
 let addItemHomework = () => {
     let newLogItem = document.createElement('li');
-    newLogItem.textContent = `You made Pukenko do homework. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`
+    newLogItem.classList.add('.new-log-item');
+    let message = `You made ${currentPukenko.name} do homework. Happiness:${happinessScore} Health:${healthScore} Conduct:${conductScore}`;
+    newLogItem.textContent = message;
     actionLog.appendChild(newLogItem);
+    updateActionLog(currentUser.id, currentPukenko.id, 4, message);
 };
 
 smoothieButton.addEventListener('click', function(event) {
     event.preventDefault();
     healthScore += 1;
+    happinessScore -= 1;
     updateScores();
     addItemSmoothie();
 });
@@ -260,11 +271,11 @@ let newPukenkoSubmit = (event) => {
         return data.json();
     })
     .then(data => {
-        getPukenko(data);
+        getNewPukenko(data);
     })
 };
 
-let getPukenko = (data) => {
+let getNewPukenko = (data) => {
     let pukenkoName = data.name;
     let userid = data.userid;
     let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
@@ -276,11 +287,32 @@ let getPukenko = (data) => {
         let userId = currentUser.id;
         let pukenkoId = currentPukenko.id;
         let actionId = 1; // 1 is the id for new Pukenkos
-        updateActionLog(userId, pukenkoId, actionId);
+        let message = `${currentPukenko.name} has been created`
+        updateActionLog(userId, pukenkoId, actionId, message);
         // console.log(currentPukenko);
         happinessScore = currentPukenko.happiness;
         healthScore = currentPukenko.hunger;
         conductScore = currentPukenko.conduct;
+    })
+    .then(() => {
+        displayGameScreen();
+    })
+}
+
+let getExistingPukenko = (data) => {
+    let pukenkoName = data.name;
+    let userid = data.userid;
+    let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
+    fetch(url).then((data) => {
+        return data.json();
+    })
+    .then( data => {
+        currentPukenko = data;
+        happinessScore = currentPukenko.happiness;
+        healthScore = currentPukenko.hunger;
+        conductScore = currentPukenko.conduct;
+    })
+    .then(() => {
         displayGameScreen();
     })
 };
@@ -292,12 +324,11 @@ let getMyPukenkos = () => {
     }).then( data => {
         clearMyPukenkos();
         data.forEach( (pukenko) => {
-            let id = pukenko.id;
             let name = pukenko.name;
             let health = pukenko.hunger;
             let happiness = pukenko.happiness;
             let conduct = pukenko.conduct;
-            addPukenkoListing(id, name, health, happiness, conduct);
+            addPukenkoListing(name, health, happiness, conduct);
         })
     })
 };
@@ -309,7 +340,15 @@ let clearMyPukenkos = () => {
     })
 };
 
-let addPukenkoListing = (id, name, health, happiness, conduct) => {
+let clearActionLogDisplay = () => {
+    let logItems = document.querySelectorAll('.new-log-item');
+    console.log(logItems);
+    logItems.forEach((item) => {
+        actionLog.removeChild(item);
+    })
+};
+
+let addPukenkoListing = (name, health, happiness, conduct) => {
     let listingContainer = document.createElement('div');
     listingContainer.classList.add('pukenko-listing-container');
     listingContainer.appendChild(addListingName(name));
@@ -320,7 +359,7 @@ let addPukenkoListing = (id, name, health, happiness, conduct) => {
             name: name,
             userid: currentUser.id
         };
-        getPukenko(data);
+        getExistingPukenko(data);
     });
     myPukenkosDisplayContainer.appendChild(listingContainer);
 };
@@ -354,8 +393,8 @@ let addSingleStatContainer = (stat, title) => {
     return listingStatContainer;
 };
 
-let updateActionLog = (userId, pukenkoId, actionId) => {
-    let body = {userId, pukenkoId, actionId};
+let updateActionLog = (userId, pukenkoId, actionId, message) => {
+    let body = {userId, pukenkoId, actionId, message};
     fetch('http://localhost:3000/actions', {
         method: 'POST',
         body: JSON.stringify(body),
@@ -371,6 +410,27 @@ let updateActionLog = (userId, pukenkoId, actionId) => {
         console.log(data + ' added to action Log');
     })
 };
+
+let updatePukenkoTable = () => {
+    let body = {
+        id: currentPukenko.id,
+        hunger: healthScore,
+        happiness: happinessScore,
+        conduct: conductScore
+    };
+    fetch(`http://localhost:3000/pukenkos/${currentPukenko.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+};
+
+// let getActionLogMessages = () => {
+//     let body = {}
+// }
 
 errorPageOkButton.addEventListener('click', closeErrorPage);
 myPukenkosPageNewButton.addEventListener('click', openNewPukenkoForm);

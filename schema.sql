@@ -24,5 +24,6 @@ CREATE TABLE action_log (
     id serial PRIMARY KEY,
     user_id INTEGER NOT NULL,
     pukenko_id INTEGER NOT NULL,
-    action_id INTEGER NOT NULL
+    action_id INTEGER NOT NULL,
+    message character varying(255) NOT NULL
 );
