@@ -170,7 +170,7 @@ let signUpSubmit = (event) => {
     event.preventDefault();
     let name = signUpUserName.value;
     let password = signUpPassword.value;
-    fetch('http://localhost:3000/signup', {
+    fetch('/signup', {
         method: 'POST',
         body: JSON.stringify({
             username: name,
@@ -199,12 +199,11 @@ let loginFormSubmit = (event) => {
 };
 
 let loginUser = (userName, userPassword, sourceForm) => {
-    let url = `http://localhost:3000/login/${userName}&${userPassword}`;
+    let url = `/login/${userName}&${userPassword}`;
     fetch(url).then((data) => {
         return data.json();
     })
     .then( data => {
-        // console.log(data);
         checkForLoginError(data, sourceForm);
     })
 };
@@ -259,7 +258,7 @@ let newPukenkoSubmit = (event) => {
         userid: currentUser.id,
         name: newPukenkoName.value
     };
-    fetch('http://localhost:3000/pukenkos', {
+    fetch('/pukenkos', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -278,7 +277,7 @@ let newPukenkoSubmit = (event) => {
 let getNewPukenko = (data) => {
     let pukenkoName = data.name;
     let userid = data.userid;
-    let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
+    let url = `/pukenkos/${pukenkoName}&${userid}`;
     fetch(url).then((data) => {
         return data.json();
     })
@@ -286,10 +285,9 @@ let getNewPukenko = (data) => {
         currentPukenko = data;
         let userId = currentUser.id;
         let pukenkoId = currentPukenko.id;
-        let actionId = 1; // 1 is the id for new Pukenkos
+        let actionId = 1;
         let message = `${currentPukenko.name} has been created`
         updateActionLog(userId, pukenkoId, actionId, message);
-        // console.log(currentPukenko);
         happinessScore = currentPukenko.happiness;
         healthScore = currentPukenko.hunger;
         conductScore = currentPukenko.conduct;
@@ -302,7 +300,7 @@ let getNewPukenko = (data) => {
 let getExistingPukenko = (data) => {
     let pukenkoName = data.name;
     let userid = data.userid;
-    let url = `http://localhost:3000/pukenkos/${pukenkoName}&${userid}`;
+    let url = `/pukenkos/${pukenkoName}&${userid}`;
     fetch(url).then((data) => {
         return data.json();
     })
@@ -318,7 +316,7 @@ let getExistingPukenko = (data) => {
 };
 
 let getMyPukenkos = () => {
-    let url = `http://localhost:3000/users/${currentUser.id}/pukenkos`;
+    let url = `/users/${currentUser.id}/pukenkos`;
     fetch(url).then((data) => {
         return data.json();
     }).then( data => {
@@ -342,7 +340,6 @@ let clearMyPukenkos = () => {
 
 let clearActionLogDisplay = () => {
     let logItems = document.querySelectorAll('.new-log-item');
-    console.log(logItems);
     logItems.forEach((item) => {
         actionLog.removeChild(item);
     })
@@ -354,7 +351,6 @@ let addPukenkoListing = (name, health, happiness, conduct) => {
     listingContainer.appendChild(addListingName(name));
     listingContainer.appendChild(addPukenkoStatsContainer(health, happiness, conduct));
     listingContainer.addEventListener('click', () => {
-        // console.log(name + " was clicked")
         let data = {
             name: name,
             userid: currentUser.id
@@ -395,7 +391,7 @@ let addSingleStatContainer = (stat, title) => {
 
 let updateActionLog = (userId, pukenkoId, actionId, message) => {
     let body = {userId, pukenkoId, actionId, message};
-    fetch('http://localhost:3000/actions', {
+    fetch('/actions', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
@@ -418,7 +414,7 @@ let updatePukenkoTable = () => {
         happiness: happinessScore,
         conduct: conductScore
     };
-    fetch(`http://localhost:3000/pukenkos/${currentPukenko.id}`, {
+    fetch(`/pukenkos/${currentPukenko.id}`, {
         method: 'PUT',
         body: JSON.stringify(body),
         headers: {
@@ -427,10 +423,6 @@ let updatePukenkoTable = () => {
         }
     })
 };
-
-// let getActionLogMessages = () => {
-//     let body = {}
-// }
 
 errorPageOkButton.addEventListener('click', closeErrorPage);
 myPukenkosPageNewButton.addEventListener('click', openNewPukenkoForm);
