@@ -1,6 +1,8 @@
+// const keys = require('./config');
 const express = require('express');
 const fs = require('fs');
 const pg = require('pg-promise')();
+// const dbConfig = keys.keys.PG_KEY;
 const dbConfig = 'postgres://ubuntu@localhost:5432/pukenkos';
 const db = pg(dbConfig);
 const bodyParser = require('body-parser');
